@@ -54,7 +54,7 @@ from helpers import (
 def apply_material(obj, material_name="Material"):
     """Apply a material to the object. Uses existing material if found."""
     material = None
-    for mat_name in [material_name, "Material.001", "Material.002"]:
+    for mat_name in [material_name, "Material.002", "Material.001"]:
         material = bpy.data.materials.get(mat_name)
         if material:
             break

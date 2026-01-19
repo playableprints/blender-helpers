@@ -22,6 +22,9 @@ A collection of command-line tools for automating Blender workflows, focused on 
 # Render a 360° turntable animation (with optional animated GIF)
 ./bin/render-360.sh model.stl --gif
 
+# Render a single snapshot (auto-orients and frames camera)
+./bin/render-snapshot.sh model.stl
+
 # Check various things about a model, including it's hollowed status
 ./bin/analyze-for-print.sh model.stl
 ```
@@ -103,6 +106,16 @@ Output: PNG sequence (`model_0001.png`, `model_0002.png`, etc.)
 
 With `--gif`: Also creates `model.gif` using ImageMagick or FFmpeg (if installed).
 
+#### render-snapshot
+Imports a model, auto-detects orientation (Y-up vs Z-up), orients it correctly, and renders a single frame.
+
+```bash
+./bin/render-snapshot.sh model.stl                  # Uses default template
+./bin/render-snapshot.sh model.stl /output/         # Custom output dir
+```
+
+Output: Single PNG (`model.png`)
+
 ### Analyze Tools
 
 #### analyze-for-print
@@ -166,6 +179,7 @@ All tools have PowerShell equivalents:
 .\bin\make-manifold.ps1 model.stl
 .\bin\hollow.ps1 model.stl -Thickness 2.0
 .\bin\render-360.ps1 model.stl -Frames 24 -Gif
+.\bin\render-snapshot.ps1 model.stl
 .\bin\analyze-for-print.ps1 model.stl
 .\bin\export-stl.ps1 model.fbx -Single
 .\bin\export-gltf.ps1 model.fbx -OutputDir C:\output
@@ -219,6 +233,7 @@ blender --background --python scripts/repair/fix-normals.py -- model.fbx
 blender --background --python scripts/repair/voxel-merge.py -- model.fbx --voxel-size 0.05
 blender --background --python scripts/repair/make-manifold.py -- model.stl
 blender --background --python scripts/repair/hollow.py -- model.stl --wall-thickness 2.0
+blender --background --python scripts/render/render-snapshot.py -- model.stl
 
 # Get help for any script:
 blender --background --python scripts/repair/hollow.py -- --help
