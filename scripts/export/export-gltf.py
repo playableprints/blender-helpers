@@ -35,6 +35,7 @@ from helpers import (
     export_gltf,
     clean_name,
     clear_animation,
+    clear_scene,
     apply_transforms,
     create_parser,
     parse_args,
@@ -68,6 +69,7 @@ def main():
     single_file = args.namespace.single
     do_cleanup = not args.namespace.no_cleanup
 
+    clear_scene()
     load_model(args)
     output_dir = setup_output_dir(args)
 

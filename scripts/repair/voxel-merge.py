@@ -32,6 +32,7 @@ from helpers import (
     export_stl,
     benchmark_start,
     benchmark_log,
+    clear_scene,
     create_parser,
     parse_args,
     load_model,
@@ -64,6 +65,9 @@ def main():
     )
     args = parse_args(parser)
     voxel_size = args.namespace.voxel_size
+
+    # Clear scene
+    clear_scene()
 
     # Load model
     load_model(args)

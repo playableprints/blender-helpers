@@ -30,6 +30,7 @@ from helpers import (
     export_stl,
     clean_name,
     hollow_mesh,
+    clear_scene,
     create_parser,
     parse_args,
     load_model,
@@ -50,6 +51,8 @@ def main():
     if not args.input_file:
         parser.print_help()
         sys.exit(1)
+
+    clear_scene()
 
     load_model(args)
     output_dir = setup_output_dir(args)

@@ -277,26 +277,21 @@ def calculate_area(obj):
         return None  # Print3D addon not available
 
 
-def ensure_print3d_addon(auto_enable=False):
-    """Check if Print3D Toolbox addon is available, optionally enable it.
-
-    Args:
-        auto_enable: If True, attempt to enable the addon if not active
+def ensure_print3d_addon():
+    """Check if Print3D Toolbox addon is available.
 
     Returns:
         True if addon is available/enabled, False otherwise
     """
-    addon_name = "object_print3d_utils"
+    # Blender 5.0+ uses extensions with bl_ext prefix
+    # Legacy addons used object_print3d_utils
+    addon_names = [
+        "bl_ext.blender_org.print3d_toolbox",  # Blender 5.0+ extension
+        "object_print3d_utils",                 # Legacy addon name
+    ]
 
-    # Check if already enabled
-    if addon_name in bpy.context.preferences.addons:
-        return True
-
-    if auto_enable:
-        try:
-            bpy.ops.preferences.addon_enable(module=addon_name)
-            return addon_name in bpy.context.preferences.addons
-        except Exception:
-            return False
+    for addon_name in addon_names:
+        if addon_name in bpy.context.preferences.addons:
+            return True
 
     return False

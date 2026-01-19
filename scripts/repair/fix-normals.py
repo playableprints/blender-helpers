@@ -25,6 +25,7 @@ from helpers import (
     export_stl,
     clean_name,
     fix_normals,
+    clear_scene,
     create_parser,
     parse_args,
     load_model,
@@ -36,6 +37,7 @@ from helpers import (
 def main():
     parser = create_parser("Recalculate normals and export to STL")
     args = parse_args(parser)
+    clear_scene()
     load_model(args)
     output_dir = setup_output_dir(args)
 

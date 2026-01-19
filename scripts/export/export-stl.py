@@ -31,6 +31,7 @@ from helpers import (
     get_selected_meshes,
     export_stl,
     clean_name,
+    clear_scene,
     create_parser,
     parse_args,
     load_model,
@@ -52,6 +53,7 @@ def main():
     selected_only = args.namespace.selected
     single_file = args.namespace.single
 
+    clear_scene()
     load_model(args)
     output_dir = setup_output_dir(args)
 

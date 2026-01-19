@@ -4,10 +4,7 @@ analyze-for-print.py - Analyze model for 3D printing and recommend repairs
 Usage:
     blender --background model.blend --python analyze-for-print.py
     blender --background --python analyze-for-print.py -- model.stl
-    blender --background --python analyze-for-print.py -- --enable-addons model.stl
-
-Options:
-    --enable-addons    Automatically enable required addons (Print3D Toolbox)
+    blender --background --python analyze-for-print.py -- model.stl
 
 Requires: Blender 5.0+ (Print3D Toolbox addon recommended)
 
@@ -87,24 +84,19 @@ def recommend_hollow(volume_cm3, max_dim_mm, is_manifold):
 
 def main():
     parser = create_parser("Analyze model for 3D printing and recommend repairs")
-    parser.add_argument(
-        '--enable-addons', action='store_true',
-        help='Automatically enable required addons (Print3D Toolbox)'
-    )
     args = parse_args(parser)
     load_model(args)
 
-    # Check for Print3D addon (auto-enable if flag provided)
-    auto_enable = args.namespace.enable_addons
-    has_print3d = ensure_print3d_addon(auto_enable=auto_enable)
+    # Check for Print3D addon
+    has_print3d = ensure_print3d_addon()
 
     if not has_print3d:
         print("Note: Print3D Toolbox addon not enabled.")
         print("      - Surface area calculation unavailable")
         print("      - Self-intersection checks unavailable")
         print("      - Volume calculation will use bmesh fallback (less accurate)")
-        print("      To enable automatically, add --enable-addons flag:")
-        print("      blender --background --python analyze-for-print.py -- --enable-addons model.stl")
+        print()
+        print("      To enable, open Blender, Edit -> Preferences -> Extensions -> search for Print3D Toolbox, enable.")
         print()
 
     # Get mesh objects
