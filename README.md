@@ -297,3 +297,5 @@ Want to create custom scripts? See **[docs/SCRIPTING.md](docs/SCRIPTING.md)** fo
 ## License
 
 MIT License. See [LICENSE.txt](./LICENSE.txt)
+
+The turntable template image courtesy calculuschild of PPL Discord.
