@@ -15,10 +15,12 @@ SCRIPT="$REPO_ROOT/scripts/render/render-snapshot.py"
 TEMPLATE="$REPO_ROOT/templates/turntable.blend"
 
 if [ -z "$1" ]; then
-    echo "Usage: render-snapshot.sh <model.stl|fbx|obj> [output_dir] [--rotation DEGREES]"
+    echo "Usage: render-snapshot.sh <model.stl|fbx|obj> [output_dir] [options]"
     echo ""
-    echo "  output_dir - Where to save render (default: next to model)"
-    echo "  --rotation - Rotation angle in degrees (default: 35)"
+    echo "  output_dir  - Where to save render (default: next to model)"
+    echo "  --rotation  - Rotation angle in degrees (default: 35)"
+    echo "  --cpu       - Use CPU rendering (GPU is default)"
+    echo "  --samples N - Number of render samples"
     exit 1
 fi
 

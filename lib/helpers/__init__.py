@@ -105,6 +105,8 @@ from .mesh_analysis import (
 
 # Rendering
 from .rendering import (
+    setup_gpu_rendering,
+    set_render_samples,
     apply_material,
     frame_camera_to_object,
     render_frame,

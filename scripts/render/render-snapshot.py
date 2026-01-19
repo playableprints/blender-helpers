@@ -5,12 +5,16 @@ Usage:
     blender --background --python render-snapshot.py -- model.stl
     blender --background --python render-snapshot.py -- model.stl /output/dir/
     blender --background --python render-snapshot.py -- model.stl --rotation 45
+    blender --background --python render-snapshot.py -- model.stl --samples 256
+    blender --background --python render-snapshot.py -- model.stl --cpu
     blender --background template.blend --python render-snapshot.py -- model.stl
 
 Arguments (after --):
     model_path  - STL/OBJ file to render (required)
     output_dir  - Where to save render (default: next to model file)
     --rotation  - Rotation angle in degrees around Z axis (default: 35)
+    --cpu       - Use CPU rendering instead of GPU (GPU is default)
+    --samples   - Number of render samples (default: from template, typically 128)
 
 Requires: Blender 5.0+
 
@@ -41,6 +45,8 @@ from helpers import (
     apply_material,
     frame_camera_to_object,
     render_frame,
+    setup_gpu_rendering,
+    set_render_samples,
 )
 
 
@@ -50,6 +56,14 @@ def main():
         '--rotation', type=float, default=35,
         help='Rotation angle in degrees around Z axis (default: 35)'
     )
+    parser.add_argument(
+        '--cpu', action='store_true',
+        help='Use CPU rendering instead of GPU (GPU is default)'
+    )
+    parser.add_argument(
+        '--samples', type=int, default=None,
+        help='Number of render samples (default: use template setting)'
+    )
     args = parse_args(parser)
 
     if not args.input_file:
@@ -58,6 +72,8 @@ def main():
 
     model_path = args.input_file
     rotation_degrees = args.namespace.rotation
+    use_cpu = args.namespace.cpu
+    samples = args.namespace.samples
     output_dir = args.output_dir or os.path.dirname(model_path) or os.getcwd()
 
     os.makedirs(output_dir, exist_ok=True)
@@ -73,6 +89,12 @@ def main():
             bpy.ops.wm.open_mainfile(filepath=template)
         else:
             print("Warning: No template found, using default scene")
+
+    # Configure rendering
+    if not use_cpu:
+        setup_gpu_rendering()
+    if samples:
+        set_render_samples(samples)
 
     print(f"Model: {model_path}")
     print(f"Output: {output_path}")

@@ -9,6 +9,75 @@ from .selection import deselect_all
 from .geometry import create_framing_cube
 
 
+def setup_gpu_rendering():
+    """Auto-detect and enable GPU rendering for Cycles.
+
+    Tries device types in order of preference:
+    - OPTIX (NVIDIA RTX, fastest)
+    - CUDA (NVIDIA, widely compatible)
+    - HIP (AMD)
+    - ONEAPI (Intel)
+    - METAL (Apple Silicon)
+
+    Returns:
+        Tuple of (device_type, device_names) if GPU enabled, or (None, []) if CPU only
+    """
+    if bpy.context.scene.render.engine != 'CYCLES':
+        print("GPU rendering requires Cycles engine")
+        return None, []
+
+    cycles_prefs = bpy.context.preferences.addons['cycles'].preferences
+
+    # Device types in order of preference
+    device_types = ['OPTIX', 'CUDA', 'HIP', 'ONEAPI', 'METAL']
+
+    for device_type in device_types:
+        try:
+            cycles_prefs.compute_device_type = device_type
+            cycles_prefs.get_devices()
+
+            # Check if we have any usable devices of this type
+            gpu_devices = [d for d in cycles_prefs.devices
+                          if d.type == device_type and d.type != 'CPU']
+
+            if gpu_devices:
+                # Enable all GPU devices
+                for device in cycles_prefs.devices:
+                    device.use = device.type != 'CPU'
+
+                # Set scene to use GPU
+                bpy.context.scene.cycles.device = 'GPU'
+
+                device_names = [d.name for d in gpu_devices]
+                print(f"GPU rendering enabled: {device_type}")
+                for name in device_names:
+                    print(f"  - {name}")
+                return device_type, device_names
+
+        except Exception:
+            continue
+
+    print("No GPU found, using CPU rendering")
+    return None, []
+
+
+def set_render_samples(samples=128):
+    """Set the number of render samples for Cycles.
+
+    Higher samples = less noise but longer render time.
+    Typical values:
+    - 32-64: Fast preview, noisy
+    - 128-256: Good quality for most renders
+    - 512+: High quality, slow
+
+    Args:
+        samples: Number of samples (default: 128)
+    """
+    if bpy.context.scene.render.engine == 'CYCLES':
+        bpy.context.scene.cycles.samples = samples
+        print(f"Render samples set to {samples}")
+
+
 def apply_material(obj, material_name="Material"):
     """Apply a material to the object. Uses existing material if found.
 
