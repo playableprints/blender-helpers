@@ -3,13 +3,16 @@
 # Usage:
 #   .\render-snapshot.ps1 model.stl
 #   .\render-snapshot.ps1 model.stl C:\output\dir
+#   .\render-snapshot.ps1 model.stl -Rotation 45
 
 param(
     [Parameter(Mandatory=$true, Position=0)]
     [string]$InputFile,
 
     [Parameter(Position=1)]
-    [string]$OutputDir
+    [string]$OutputDir,
+
+    [float]$Rotation = 35
 )
 
 . "$PSScriptRoot\common.ps1"
@@ -34,5 +37,7 @@ if (Test-Path $Template) {
 if ($OutputDir) {
     $blenderArgs += $OutputDir
 }
+
+$blenderArgs += @("--rotation", $Rotation)
 
 & $Blender @blenderArgs

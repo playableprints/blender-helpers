@@ -107,11 +107,13 @@ Output: PNG sequence (`model_0001.png`, `model_0002.png`, etc.)
 With `--gif`: Also creates `model.gif` using ImageMagick or FFmpeg (if installed).
 
 #### render-snapshot
-Imports a model, auto-detects orientation (Y-up vs Z-up), orients it correctly, and renders a single frame.
+Imports a model, auto-detects orientation (Y-up vs Z-up), orients it correctly, rotates for a better viewing angle, and renders a single frame.
 
 ```bash
-./bin/render-snapshot.sh model.stl                  # Uses default template
+./bin/render-snapshot.sh model.stl                  # Uses default template, 35° rotation
 ./bin/render-snapshot.sh model.stl /output/         # Custom output dir
+./bin/render-snapshot.sh model.stl --rotation 45    # Custom rotation angle
+./bin/render-snapshot.sh model.stl --rotation 0     # Face-on view (no rotation)
 ```
 
 Output: Single PNG (`model.png`)
@@ -179,7 +181,7 @@ All tools have PowerShell equivalents:
 .\bin\make-manifold.ps1 model.stl
 .\bin\hollow.ps1 model.stl -Thickness 2.0
 .\bin\render-360.ps1 model.stl -Frames 24 -Gif
-.\bin\render-snapshot.ps1 model.stl
+.\bin\render-snapshot.ps1 model.stl -Rotation 45
 .\bin\analyze-for-print.ps1 model.stl
 .\bin\export-stl.ps1 model.fbx -Single
 .\bin\export-gltf.ps1 model.fbx -OutputDir C:\output

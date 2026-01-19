@@ -102,3 +102,10 @@ from .mesh_analysis import (
     calculate_area,
     ensure_print3d_addon,
 )
+
+# Rendering
+from .rendering import (
+    apply_material,
+    frame_camera_to_object,
+    render_frame,
+)

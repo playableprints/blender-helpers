@@ -4,11 +4,13 @@ render-snapshot.py - Render a single frame snapshot of a model
 Usage:
     blender --background --python render-snapshot.py -- model.stl
     blender --background --python render-snapshot.py -- model.stl /output/dir/
+    blender --background --python render-snapshot.py -- model.stl --rotation 45
     blender --background template.blend --python render-snapshot.py -- model.stl
 
 Arguments (after --):
     model_path  - STL/OBJ file to render (required)
     output_dir  - Where to save render (default: next to model file)
+    --rotation  - Rotation angle in degrees around Z axis (default: 35)
 
 Requires: Blender 5.0+
 
@@ -34,57 +36,20 @@ from helpers import (
     get_basename,
     is_y_up,
     center_object,
-    create_framing_cube,
     create_parser,
     parse_args,
+    apply_material,
+    frame_camera_to_object,
+    render_frame,
 )
-
-
-def apply_material(obj, material_name="Material"):
-    """Apply a material to the object. Uses existing material if found."""
-    material = None
-    for mat_name in [material_name, "Material.002", "Material.001"]:
-        material = bpy.data.materials.get(mat_name)
-        if material:
-            break
-
-    if not material:
-        material = bpy.data.materials.new(name="RenderMaterial")
-        material.use_nodes = True
-
-    if obj.data.materials:
-        obj.data.materials[0] = material
-    else:
-        obj.data.materials.append(material)
-
-
-def frame_camera_to_object(obj):
-    """Create framing cube and aim camera at it."""
-    framing_cube = create_framing_cube(obj)
-    deselect_all()
-    framing_cube.select_set(True)
-    bpy.context.view_layer.objects.active = framing_cube
-
-    # Frame camera to cube
-    for area in bpy.context.screen.areas:
-        if area.type == 'VIEW_3D':
-            with bpy.context.temp_override(area=area):
-                bpy.ops.view3d.camera_to_view_selected()
-            break
-
-    return framing_cube
-
-
-def render_snapshot(output_path):
-    """Render a single frame to the specified path."""
-    bpy.context.scene.render.image_settings.file_format = 'PNG'
-    bpy.context.scene.render.filepath = output_path
-    bpy.ops.render.render(write_still=True)
-    print(f"Rendered: {output_path}")
 
 
 def main():
     parser = create_parser("Render a single snapshot of a model")
+    parser.add_argument(
+        '--rotation', type=float, default=35,
+        help='Rotation angle in degrees around Z axis (default: 35)'
+    )
     args = parse_args(parser)
 
     if not args.input_file:
@@ -92,6 +57,7 @@ def main():
         sys.exit(1)
 
     model_path = args.input_file
+    rotation_degrees = args.namespace.rotation
     output_dir = args.output_dir or os.path.dirname(model_path) or os.getcwd()
 
     os.makedirs(output_dir, exist_ok=True)
@@ -136,6 +102,10 @@ def main():
     # Center and set up
     center_object(obj)
     apply_material(obj)
+
+    # Apply rotation for better viewing angle
+    if rotation_degrees != 0:
+        obj.rotation_euler[2] = math.radians(rotation_degrees)
     timer = benchmark_log(timer, "Setup completed")
 
     # Frame camera
@@ -143,7 +113,7 @@ def main():
 
     # Render single frame
     print("Rendering snapshot...")
-    render_snapshot(output_path)
+    render_frame(output_path)
     benchmark_log(timer, "Render completed")
 
     print(f"\nDone! Snapshot saved to: {output_path}")

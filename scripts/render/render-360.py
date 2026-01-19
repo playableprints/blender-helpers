@@ -41,32 +41,11 @@ from helpers import (
     get_basename,
     is_y_up,
     center_object,
-    create_framing_cube,
     create_parser,
     parse_args,
+    apply_material,
+    frame_camera_to_object,
 )
-
-
-# -----------------------------------------------------------------------------
-# Material / Rendering
-# -----------------------------------------------------------------------------
-
-def apply_material(obj, material_name="Material"):
-    """Apply a material to the object. Uses existing material if found."""
-    material = None
-    for mat_name in [material_name, "Material.002", "Material.001"]:
-        material = bpy.data.materials.get(mat_name)
-        if material:
-            break
-
-    if not material:
-        material = bpy.data.materials.new(name="RenderMaterial")
-        material.use_nodes = True
-
-    if obj.data.materials:
-        obj.data.materials[0] = material
-    else:
-        obj.data.materials.append(material)
 
 
 def setup_rotation_animation(obj, start_frame, end_frame):
@@ -247,18 +226,8 @@ def main():
     center_object(obj)
     apply_material(obj)
 
-    # Create framing cube and aim camera
-    framing_cube = create_framing_cube(obj)
-    deselect_all()
-    framing_cube.select_set(True)
-    bpy.context.view_layer.objects.active = framing_cube
-
-    # Frame camera to cube
-    for area in bpy.context.screen.areas:
-        if area.type == 'VIEW_3D':
-            with bpy.context.temp_override(area=area):
-                bpy.ops.view3d.camera_to_view_selected()
-            break
+    # Frame camera to object
+    frame_camera_to_object(obj)
 
     # Set up animation
     setup_rotation_animation(obj, start_frame, end_frame)
