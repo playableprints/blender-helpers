@@ -19,12 +19,14 @@ A collection of command-line tools for automating Blender workflows, focused on 
 # Hollow a model for resin printing
 ./bin/hollow.sh model.stl 2.0
 
-# Render a 360° turntable animation (with optional GIF)
+# Render a 360° turntable animation (with optional animated GIF)
 ./bin/render-360.sh model.stl --gif
 
-# Check if a model should be hollowed for resin printing
+# Check various things about a model, including it's hollowed status
 ./bin/analyze-for-print.sh model.stl
 ```
+
+**Note:** These scripts by default output to <inputFileName>.stl and they *will* overwrite the input file if it's set to STL. You can set the output file path using the second argument (see below for more details).
 
 ## Installation
 
@@ -32,8 +34,6 @@ A collection of command-line tools for automating Blender workflows, focused on 
 2. Ensure Blender 5.0+ is installed and either:
    - Added to your system PATH, or
    - Installed in the default location (`/Applications/Blender.app` on Mac, `C:\Program Files\Blender Foundation\Blender 5.0` on Windows)
-
-That's it. No Python packages to install - everything uses Blender's bundled Python.
 
 ## Input Formats
 
@@ -76,7 +76,7 @@ Fixes non-manifold geometry (holes, loose vertices, non-manifold edges) to make 
 ```
 
 #### hollow
-Hollows a solid model for resin printing by adding a solidify modifier. Reduces resin usage and print time.
+Hollows a solid model for resin printing by adding a solidify modifier. Reduces resin usage and print time. You will need to add drain holes as a separate step.
 
 ```bash
 ./bin/hollow.sh model.stl                           # Default wall thickness (2mm)
@@ -296,4 +296,4 @@ Want to create custom scripts? See **[docs/SCRIPTING.md](docs/SCRIPTING.md)** fo
 
 ## License
 
-Do what you want with it. Attribution appreciated but not required.
+MIT License. See [LICENSE.txt](./LICENSE.txt)
